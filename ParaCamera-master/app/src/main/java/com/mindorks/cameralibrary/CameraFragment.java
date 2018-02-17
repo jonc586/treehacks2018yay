@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,27 +93,22 @@ public class CameraFragment extends Fragment {
                 AsyncTask.execute(new Runnable() {
                     @Override
                     public void run() {
+
                         getActivity().runOnUiThread(new Runnable() {
                             public void run() {
                                 Toast.makeText(getActivity().getApplicationContext(), "we made it here!", Toast.LENGTH_SHORT).show();
                             }
                         });
+
                         // Convert photo to byte array
-
-
-                        /*InputStream inputStream =
-                                getResources().openRawResource(R.raw.photo);
-                        byte[] photoData = IOUtils.toByteArray(inputStream);
-                        inputStream.close();*/
-
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                         byte[] byteArray = stream.toByteArray();
+
                         getActivity().runOnUiThread(new Runnable() {
                             public void run() {
                                 Toast.makeText(getActivity().getApplicationContext(), "changed to byte array", Toast.LENGTH_SHORT).show();
                             }
-
                         });
 
                         Image inputImage = new Image();
@@ -149,7 +143,7 @@ public class CameraFragment extends Fragment {
                                     vision.images().annotate(batchRequest).execute();
                             List<AnnotateImageResponse> responses = batchResponse.getResponses();
 
-                           
+
 
 
                             //for (int i = 0; i < responses.size(); i++) {

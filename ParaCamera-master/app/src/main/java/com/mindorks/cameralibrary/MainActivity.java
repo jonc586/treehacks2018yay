@@ -50,16 +50,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == Camera.REQUEST_TAKE_PHOTO) {
             Bitmap bitmap = camera.getCameraBitmap();
             if (bitmap != null) {
-                //Toast.makeText(this.getApplicationContext(), "I think this is recyclable!", Toast.LENGTH_SHORT).show();
                 picFrame.setImageBitmap(bitmap);
-                Vision.Builder visionBuilder = new Vision.Builder(
-                        new NetHttpTransport(),
-                        new AndroidJsonFactory(),
-                        null);
-
-                visionBuilder.setVisionRequestInitializer(
-                        new VisionRequestInitializer("AIzaSyB_wbusucGiv0ZAzH73_w_rm2tM7G88SR8"));
-                //Toast.makeText(this.getApplicationContext(), "I think this is recyclable!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this.getApplicationContext(), "Picture not taken!", Toast.LENGTH_SHORT).show();
             }
