@@ -6,14 +6,20 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.vision.v1.Vision;
 import com.google.api.services.vision.v1.VisionRequestInitializer;
 import com.google.api.services.vision.v1.model.AnnotateImageRequest;
@@ -26,12 +32,18 @@ import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
 import com.mindorks.paracamera.Camera;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by janisharali on 15/11/16.
@@ -69,6 +81,14 @@ public class CameraFragment extends Fragment {
         }
     }
 
+    private Image getImageEncodeImage(Bitmap bitmap) {
+        Image base64EncodedImage = new Image();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream);
+        byte[] imageBytes = byteArrayOutputStream.toByteArray();
+        base64EncodedImage.encodeContent(imageBytes);
+        return base64EncodedImage;
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -86,96 +106,92 @@ public class CameraFragment extends Fragment {
                         new VisionRequestInitializer("AIzaSyB_wbusucGiv0ZAzH73_w_rm2tM7G88SR8"));
 
                 final Vision vision = visionBuilder.build();
-                Toast.makeText(getActivity().getApplicationContext(), "Google Vision API Is Great!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(), "Loading...", Toast.LENGTH_SHORT).show();
+
+                Feature feature = new Feature();
+                feature.setType("LABEL_DETECTION");
+                feature.setMaxResults(10);
+                final AnnotateImageRequest annotateImageReq = new AnnotateImageRequest();
+                annotateImageReq.setFeatures(Arrays.asList(feature));
+
+                annotateImageReq.setImage(getImageEncodeImage(bitmap));
+                //annotateImageRequests.add(annotateImageReq);
 
 
                 // Create new thread
-                AsyncTask.execute(new Runnable() {
+                new AsyncTask<Object, Void, String>() {
                     @Override
-                    public void run() {
-
-                        getActivity().runOnUiThread(new Runnable() {
-                            public void run() {
-                                Toast.makeText(getActivity().getApplicationContext(), "we made it here!", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                        // Convert photo to byte array
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                        byte[] byteArray = stream.toByteArray();
-
-                        getActivity().runOnUiThread(new Runnable() {
-                            public void run() {
-                                Toast.makeText(getActivity().getApplicationContext(), "changed to byte array", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                        Image inputImage = new Image();
-                        inputImage.encodeContent(byteArray);
-                        getActivity().runOnUiThread(new Runnable() {
-                            public void run() {
-                                Toast.makeText(getActivity().getApplicationContext(), "content encoded", Toast.LENGTH_SHORT).show();
-                            }
-
-                        });
-
-                        Feature desiredFeature = new Feature();
-                        desiredFeature.setType("LABEL_DETECTION");
-
-                        AnnotateImageRequest request = new AnnotateImageRequest();
-                        request.setImage(inputImage);
-                        request.setFeatures(Arrays.asList(desiredFeature));
-
-                        BatchAnnotateImagesRequest batchRequest =
-                                new BatchAnnotateImagesRequest();
-
-                        batchRequest.setRequests(Arrays.asList(request));
-                        getActivity().runOnUiThread(new Runnable() {
-                            public void run() {
-                                Toast.makeText(getActivity().getApplicationContext(), "before the try", Toast.LENGTH_SHORT).show();
-                            }
-
-                        });
-
+                    protected String doInBackground(Object... params) {
                         try {
-                            BatchAnnotateImagesResponse batchResponse =
-                                    vision.images().annotate(batchRequest).execute();
-                            List<AnnotateImageResponse> responses = batchResponse.getResponses();
 
+                            HttpTransport httpTransport = AndroidHttp.newCompatibleTransport();
+                            JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
 
+                            VisionRequestInitializer requestInitializer = new VisionRequestInitializer("AIzaSyB_wbusucGiv0ZAzH73_w_rm2tM7G88SR8");
 
-
-                            //for (int i = 0; i < responses.size(); i++) {
-                                final String result = responses.get(0).getLabelAnnotations().get(0).toString();
-                                getActivity().runOnUiThread(new Runnable() {
-                                    public void run() {
-                                        Toast.makeText(getActivity().getApplicationContext(), result, Toast.LENGTH_LONG).show();
-                                    }
-
-                                });
-                            //}
-
-                            /*for (AnnotateImageResponse res : responses) {
-                                /*if (res.hasError()) {
-                                    out.printf("Error: %s\n", res.getError().getMessage());
-                                    return;
+                            Vision.Builder builder = new Vision.Builder(httpTransport, jsonFactory, null);
+                            builder.setVisionRequestInitializer(requestInitializer);
+                            getActivity().runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Toast.makeText(getActivity().getApplicationContext(), "Initializer Requested", Toast.LENGTH_SHORT).show();
                                 }
 
-                                // For full list of available annotations, see http://g.co/cloud/vision/docs
-                                for (EntityAnnotation annotation : res.getLabelAnnotations()) {
-                                    annotation.getDescription().forEach((k, v) -> out.printf("%s : %s\n", k, v.toString()));
+                            });
+
+                            //Vision vision = builder.build();
+
+                            BatchAnnotateImagesRequest batchAnnotateImagesRequest = new BatchAnnotateImagesRequest();
+                            batchAnnotateImagesRequest.setRequests(Arrays.asList(annotateImageReq));
+                            getActivity().runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Toast.makeText(getActivity().getApplicationContext(), "Annotated Images Requested", Toast.LENGTH_SHORT).show();
                                 }
-                            }*/
 
+                            });
 
-                        } catch (IOException EX) {
-                            Toast.makeText(getActivity().getApplicationContext(), "OH NOOOOOOO!", Toast.LENGTH_SHORT).show();
+                            Vision.Images.Annotate annotateRequest = vision.images().annotate(batchAnnotateImagesRequest);
+                            annotateRequest.setDisableGZipContent(true);
+                            getActivity().runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Toast.makeText(getActivity().getApplicationContext(), "Images Annotated", Toast.LENGTH_SHORT).show();
+                                }
+
+                            });
+
+                            BatchAnnotateImagesResponse response = annotateRequest.execute();
+
+                            getActivity().runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Toast.makeText(getActivity().getApplicationContext(), "requests sent", Toast.LENGTH_SHORT).show();
+                                }
+
+                            });
+
+                            Log.d(TAG, "result received, or something");
+                            final String result = response.getResponses().get(0).toString();
+
+                            getActivity().runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Toast.makeText(getActivity().getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+                                }
+
+                            });
+
+                            Log.d(TAG, result);
+                            //return convertResponseToString(response);
+                        } catch (GoogleJsonResponseException e) {
+                            Log.d(TAG, "failed to make API request because " + e.getContent());
+                        } catch (IOException e) {
+                            Log.d(TAG, "failed to make API request because of other IOException " + e.getMessage());
                         }
-
-
+                        return "Cloud Vision API request failed. Check logs for details.";
                     }
-                });
+
+                    protected void onPostExecute(String result) {
+                        //visionAPIData.setText(result);
+                        //imageUploadProgress.setVisibility(View.INVISIBLE);
+                    }
+                }.execute();
 
             } else {
                 Toast.makeText(getActivity().getApplicationContext(), "Picture not taken!", Toast.LENGTH_SHORT).show();
