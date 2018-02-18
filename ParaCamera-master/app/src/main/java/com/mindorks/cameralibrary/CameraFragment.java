@@ -56,10 +56,6 @@ import static android.content.ContentValues.TAG;
  */
 
 public class CameraFragment extends Fragment {
-    File plasticFile = new File("plastic.txt");
-    File paperFile = new File("paper.txt");
-    File compostFile = new File("compost.txt");
-    File metalsFile = new File("metals.txt");
 
     private ImageView picFrame;
     private Camera camera;
