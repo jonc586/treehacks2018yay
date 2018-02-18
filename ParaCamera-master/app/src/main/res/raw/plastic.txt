@@ -1,0 +1,8 @@
+plastic
+bottle
+boba
+jug
+distilled beverage
+water
+drinkware
+drink

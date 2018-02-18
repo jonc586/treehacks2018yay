@@ -1,0 +1,17 @@
+paper
+document
+homework
+envelope
+mail
+font
+notebook
+notes
+poster
+carton
+book
+books
+cardboard
+magazine
+wood
+newspaper
+material
