@@ -33,8 +33,11 @@ import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
 import com.mindorks.paracamera.Camera;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -43,6 +46,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 import static android.content.ContentValues.TAG;
 
@@ -51,6 +55,9 @@ import static android.content.ContentValues.TAG;
  */
 
 public class CameraFragment extends Fragment {
+    File plasticFile = new File("plastic.txt");
+    File paperFile = new File("paper.txt");
+    File compostFile = new File("compost.txt");
 
     private ImageView picFrame;
     private Camera camera;
@@ -170,25 +177,21 @@ public class CameraFragment extends Fragment {
 
 
 
-                            boolean recyclable = false;
+                            String result = "";
                             for (AnnotateImageResponse imgResponse : response.getResponses()) {
                                 for (EntityAnnotation entity : imgResponse.getLabelAnnotations()) {
-                                    String description = entity.getDescription();
-                                    if (description.equals("yellow")) {
-                                        recyclable = true;
-                                        break;
-                                    }
+                                    result = classify(entity.getDescription());
+                                    if (!result.equals("")) break;
                                 }
-                                if (recyclable) Log.d(TAG,"yay bottles are recyclable!!!");
-                                else Log.d(TAG, "not recyclable");
+                                if (result.equals("")) result = "landfill";
+                                Log.d(TAG, result);
                             }
-
+                            final String printThingy = result;
                             Log.d(TAG, "result received, or something");
-                            final String result = response.getResponses().get(0).toString();
 
                             getActivity().runOnUiThread(new Runnable() {
                                 public void run() {
-                                    Toast.makeText(getActivity().getApplicationContext(), result, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getActivity().getApplicationContext(), printThingy, Toast.LENGTH_LONG).show();
                                 }
 
                             });
@@ -213,6 +216,37 @@ public class CameraFragment extends Fragment {
                 Toast.makeText(getActivity().getApplicationContext(), "Picture not taken!", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private String classify(String description) {
+        try {
+            Scanner scanner = new Scanner(plasticFile);
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if(line.equals(description)) {
+                    return "plastic";
+                }
+            }
+            scanner = new Scanner(paperFile);
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if(line.equals(description)) {
+                    return "paper";
+                }
+            }
+            scanner = new Scanner(compostFile);
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if(line.equals(description)) {
+                    return "compost";
+                }
+            }
+            scanner.close();
+            return "";
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     @Override
