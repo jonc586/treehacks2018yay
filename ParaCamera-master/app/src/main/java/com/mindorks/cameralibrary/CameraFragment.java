@@ -34,6 +34,8 @@ import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
 import com.mindorks.paracamera.Camera;
 
+import org.w3c.dom.Text;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -59,6 +61,7 @@ public class CameraFragment extends Fragment {
 
     private ImageView picFrame;
     private Camera camera;
+    //private TextView tv;
 
     @Nullable
     @Override
@@ -112,7 +115,6 @@ public class CameraFragment extends Fragment {
                         new VisionRequestInitializer("AIzaSyB_wbusucGiv0ZAzH73_w_rm2tM7G88SR8"));
 
                 final Vision vision = visionBuilder.build();
-                //Toast.makeText(getActivity().getApplicationContext(), "Loading...", Toast.LENGTH_SHORT).show();
 
                 Feature feature = new Feature();
                 feature.setType("LABEL_DETECTION");
@@ -121,8 +123,6 @@ public class CameraFragment extends Fragment {
                 annotateImageReq.setFeatures(Arrays.asList(feature));
 
                 annotateImageReq.setImage(getImageEncodeImage(bitmap));
-                //annotateImageRequests.add(annotateImageReq);
-
 
                 // Create new thread
                 new AsyncTask<Object, Void, String>() {
@@ -137,43 +137,14 @@ public class CameraFragment extends Fragment {
 
                             Vision.Builder builder = new Vision.Builder(httpTransport, jsonFactory, null);
                             builder.setVisionRequestInitializer(requestInitializer);
-                            /*getActivity().runOnUiThread(new Runnable() {
-                                public void run() {
-                                    Toast.makeText(getActivity().getApplicationContext(), "Initializer Requested", Toast.LENGTH_SHORT).show();
-                                }
-
-                            });*/
-
-                            //Vision vision = builder.build();
 
                             BatchAnnotateImagesRequest batchAnnotateImagesRequest = new BatchAnnotateImagesRequest();
                             batchAnnotateImagesRequest.setRequests(Arrays.asList(annotateImageReq));
-                            /*getActivity().runOnUiThread(new Runnable() {
-                                public void run() {
-                                    Toast.makeText(getActivity().getApplicationContext(), "Annotated Images Requested", Toast.LENGTH_SHORT).show();
-                                }
-
-                            });*/
 
                             Vision.Images.Annotate annotateRequest = vision.images().annotate(batchAnnotateImagesRequest);
                             annotateRequest.setDisableGZipContent(true);
-                            /*getActivity().runOnUiThread(new Runnable() {
-                                public void run() {
-                                    Toast.makeText(getActivity().getApplicationContext(), "Images Annotated", Toast.LENGTH_SHORT).show();
-                                }
-
-                            });*/
 
                             BatchAnnotateImagesResponse response = annotateRequest.execute();
-
-                            /*getActivity().runOnUiThread(new Runnable() {
-                                public void run() {
-                                    Toast.makeText(getActivity().getApplicationContext(), "requests sent", Toast.LENGTH_SHORT).show();
-                                }
-
-                            });*/
-
-
 
                             String result = "";
                             for (AnnotateImageResponse imgResponse : response.getResponses()) {
@@ -185,18 +156,16 @@ public class CameraFragment extends Fragment {
                                 if (result.equals("")) result = "landfill";
                                 Log.d(TAG, result);
                             }
-                            final String printThingy = result;
-                            Log.d(TAG, "result received, or something");
 
+                            final String finalMessage = "This item is " + result.toLowerCase() + "!";
                             getActivity().runOnUiThread(new Runnable() {
                                 public void run() {
-                                    Toast.makeText(getActivity().getApplicationContext(), printThingy, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getActivity().getApplicationContext(), finalMessage, Toast.LENGTH_LONG).show();
+                                    ((CameraActivity) getActivity()).setTV(finalMessage);
                                 }
-
                             });
 
                             Log.d(TAG, result);
-                            //return convertResponseToString(response);
                         } catch (GoogleJsonResponseException e) {
                             Log.d(TAG, "failed to make API request because " + e.getContent());
                         } catch (IOException e) {
@@ -218,8 +187,6 @@ public class CameraFragment extends Fragment {
     }
 
     private String classify(String description) {
-        TextView tv = (TextView)getView().findViewById(R.id.tv_itemStatus);
-
         InputStream plasticStream = getActivity().getResources().openRawResource(R.raw.plastic);
         InputStream paperStream = getActivity().getResources().openRawResource(R.raw.paper);
         InputStream compostStream = getActivity().getResources().openRawResource(R.raw.compost);
@@ -229,7 +196,6 @@ public class CameraFragment extends Fragment {
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             if(line.equals(description)) {
-                tv.setText("This item is plastic!");
                 return "plastic";
             }
         }
@@ -237,7 +203,6 @@ public class CameraFragment extends Fragment {
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             if(line.equals(description)) {
-                tv.setText("This item is paper!");
                 return "Paper";
             }
         }
@@ -245,7 +210,6 @@ public class CameraFragment extends Fragment {
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             if(line.equals(description)) {
-                tv.setText("This item is compost!");
                 return "Compost";
             }
         }
@@ -253,12 +217,10 @@ public class CameraFragment extends Fragment {
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             if(line.equals(description)) {
-                tv.setText("This item is metal!");
                 return "Bottle/Can";
             }
         }
         scanner.close();
-        tv.setText("This item is trash!");
         return "";
     }
 
