@@ -24,7 +24,7 @@
         android:layout_gravity="center"
         android:textColor="@color/white"
         android:textSize="18sp"
-        android:text="" />
+        android:text="Loading..." />
 
     <Button
         android:id="@+id/button_restart"
