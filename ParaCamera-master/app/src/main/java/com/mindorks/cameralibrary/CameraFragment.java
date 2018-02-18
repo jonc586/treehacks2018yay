@@ -170,10 +170,17 @@ public class CameraFragment extends Fragment {
 
 
 
+                            boolean recyclable = false;
                             for (AnnotateImageResponse imgResponse : response.getResponses()) {
                                 for (EntityAnnotation entity : imgResponse.getLabelAnnotations()) {
-                                    Log.d(TAG, entity.getDescription());
+                                    String description = entity.getDescription();
+                                    if (description.equals("yellow")) {
+                                        recyclable = true;
+                                        break;
+                                    }
                                 }
+                                if (recyclable) Log.d(TAG,"yay bottles are recyclable!!!");
+                                else Log.d(TAG, "not recyclable");
                             }
 
                             Log.d(TAG, "result received, or something");
