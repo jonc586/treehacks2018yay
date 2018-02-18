@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -219,11 +220,13 @@ public class CameraFragment extends Fragment {
     }
 
     private String classify(String description) {
+        TextView tv = (TextView)getView().findViewById(R.id.tv_itemStatus);
         try {
             Scanner scanner = new Scanner(plasticFile);
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 if(line.equals(description)) {
+                    tv.setText("This item is plastic!");
                     return "plastic";
                 }
             }

@@ -17,6 +17,13 @@
         android:layout_width="match_parent"
         android:layout_height="400dp" />
 
+
+    <TextView
+        android:id="@+id/tv_itemStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+
     <Button
         android:id="@+id/button_restart"
         android:layout_width="match_parent"
