@@ -1,6 +1,7 @@
 package com.mindorks.cameralibrary;
 
 import android.app.Fragment;
+import android.content.Entity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -90,12 +91,6 @@ public class CameraFragment extends Fragment {
         return base64EncodedImage;
     }
 
-    private String processResult(String input) {
-        ArrayList<String> buffer = new ArrayList<String>();
-        buffer.
-        return null;
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -173,6 +168,14 @@ public class CameraFragment extends Fragment {
 
                             });*/
 
+
+
+                            for (AnnotateImageResponse imgResponse : response.getResponses()) {
+                                for (EntityAnnotation entity : imgResponse.getLabelAnnotations()) {
+                                    Log.d(TAG, entity.getDescription());
+                                }
+                            }
+
                             Log.d(TAG, "result received, or something");
                             final String result = response.getResponses().get(0).toString();
 
@@ -182,7 +185,6 @@ public class CameraFragment extends Fragment {
                                 }
 
                             });
-                            String classification = processResult(result);
 
                             Log.d(TAG, result);
                             //return convertResponseToString(response);
