@@ -227,41 +227,43 @@ public class CameraFragment extends Fragment {
         InputStream plasticStream = getActivity().getResources().openRawResource(R.raw.plastic);
         InputStream paperStream = getActivity().getResources().openRawResource(R.raw.paper);
         InputStream compostStream = getActivity().getResources().openRawResource(R.raw.compost);
-<<<<<<< HEAD
         InputStream metalsStream = getActivity().getResources().openRawResource(R.raw.metals);
 
-        //try {
-            Scanner scanner = new Scanner(plasticStream);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                if(line.equals(description)) {
-                    tv.setText("This item is plastic!");
-                    return "plastic";
-                }
+        Scanner scanner = new Scanner(plasticStream);
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            if(line.equals(description)) {
+                tv.setText("This item is plastic!");
+                return "plastic";
             }
-            scanner = new Scanner(paperStream);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                if(line.equals(description)) {
-                    return "Paper";
-                }
+        }
+        scanner = new Scanner(paperStream);
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            if(line.equals(description)) {
+                tv.setText("This item is paper!");
+                return "Paper";
             }
-            scanner = new Scanner(compostStream);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                if(line.equals(description)) {
-                    return "Compost";
-                }
+        }
+        scanner = new Scanner(compostStream);
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            if(line.equals(description)) {
+                tv.setText("This item is compost!");
+                return "Compost";
             }
-            scanner = new Scanner(metalsStream);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                if(line.equals(description)) {
-                    return "Bottle/Can";
-                }
+        }
+        scanner = new Scanner(metalsStream);
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            if(line.equals(description)) {
+                tv.setText("This item is metal!");
+                return "Bottle/Can";
             }
-            scanner.close();
-            return "";
+        }
+        scanner.close();
+        tv.setText("This item is trash!");
+        return "";
     }
 
     @Override
