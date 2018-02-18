@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -221,19 +222,21 @@ public class CameraFragment extends Fragment {
     }
 
     private String classify(String description) {
-        Log.d(TAG, "starting to classify!");
+        TextView tv = (TextView)getView().findViewById(R.id.tv_itemStatus);
+
         InputStream plasticStream = getActivity().getResources().openRawResource(R.raw.plastic);
         InputStream paperStream = getActivity().getResources().openRawResource(R.raw.paper);
         InputStream compostStream = getActivity().getResources().openRawResource(R.raw.compost);
+<<<<<<< HEAD
         InputStream metalsStream = getActivity().getResources().openRawResource(R.raw.metals);
 
         //try {
             Scanner scanner = new Scanner(plasticStream);
-            Log.d (TAG, "does scanner have next line " + scanner.hasNextLine());
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 if(line.equals(description)) {
-                    return "Plastic";
+                    tv.setText("This item is plastic!");
+                    return "plastic";
                 }
             }
             scanner = new Scanner(paperStream);
@@ -259,10 +262,6 @@ public class CameraFragment extends Fragment {
             }
             scanner.close();
             return "";
-        /*} catch (IOException e) {//FileNotFoundException e) {
-            e.printStackTrace();
-        }*/
-        //return "";
     }
 
     @Override
