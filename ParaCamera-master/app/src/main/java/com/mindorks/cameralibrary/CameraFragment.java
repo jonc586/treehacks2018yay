@@ -181,6 +181,7 @@ public class CameraFragment extends Fragment {
                             String result = "";
                             for (AnnotateImageResponse imgResponse : response.getResponses()) {
                                 for (EntityAnnotation entity : imgResponse.getLabelAnnotations()) {
+                                    Log.d(TAG, entity.getDescription());
                                     result = classify(entity.getDescription());
                                     if (!result.equals("")) break;
                                 }
@@ -221,8 +222,12 @@ public class CameraFragment extends Fragment {
 
     private String classify(String description) {
         TextView tv = (TextView)getView().findViewById(R.id.tv_itemStatus);
-        try {
-            Scanner scanner = new Scanner(plasticFile);
+
+        InputStream plasticStream = getActivity().getResources().openRawResource(R.raw.plastic);
+        InputStream paperStream = getActivity().getResources().openRawResource(R.raw.paper);
+        InputStream compostStream = getActivity().getResources().openRawResource(R.raw.compost);
+
+            Scanner scanner = new Scanner(plasticStream);
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 if(line.equals(description)) {
@@ -230,26 +235,22 @@ public class CameraFragment extends Fragment {
                     return "plastic";
                 }
             }
-            scanner = new Scanner(paperFile);
+            scanner = new Scanner(paperStream);
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 if(line.equals(description)) {
-                    return "paper";
+                    return "Paper";
                 }
             }
-            scanner = new Scanner(compostFile);
+            scanner = new Scanner(compostStream);
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 if(line.equals(description)) {
-                    return "compost";
+                    return "Compost";
                 }
             }
             scanner.close();
             return "";
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return "";
     }
 
     @Override
