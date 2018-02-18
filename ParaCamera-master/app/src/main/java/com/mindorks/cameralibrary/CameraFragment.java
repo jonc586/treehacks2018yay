@@ -160,7 +160,7 @@ public class CameraFragment extends Fragment {
                             final String finalMessage = "This item is " + result.toLowerCase() + "!";
                             getActivity().runOnUiThread(new Runnable() {
                                 public void run() {
-                                    Toast.makeText(getActivity().getApplicationContext(), finalMessage, Toast.LENGTH_LONG).show();
+                                    //Toast.makeText(getActivity().getApplicationContext(), finalMessage, Toast.LENGTH_LONG).show();
                                     ((CameraActivity) getActivity()).setTV(finalMessage);
                                 }
                             });
