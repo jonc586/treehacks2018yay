@@ -1,0 +1,6 @@
+metal
+aluminum
+tin can
+tin
+aluminum can
+

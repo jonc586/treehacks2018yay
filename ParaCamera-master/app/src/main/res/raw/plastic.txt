@@ -5,4 +5,3 @@ jug
 distilled beverage
 water
 drinkware
-drink
