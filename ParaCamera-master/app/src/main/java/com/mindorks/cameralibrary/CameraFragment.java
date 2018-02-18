@@ -58,6 +58,7 @@ public class CameraFragment extends Fragment {
     File plasticFile = new File("plastic.txt");
     File paperFile = new File("paper.txt");
     File compostFile = new File("compost.txt");
+    File metalsFile = new File("metals.txt");
 
     private ImageView picFrame;
     private Camera camera;
@@ -224,12 +225,13 @@ public class CameraFragment extends Fragment {
         InputStream plasticStream = getActivity().getResources().openRawResource(R.raw.plastic);
         InputStream paperStream = getActivity().getResources().openRawResource(R.raw.paper);
         InputStream compostStream = getActivity().getResources().openRawResource(R.raw.compost);
+        InputStream metalsStream = getActivity().getResources().openRawResource(R.raw.metals);
+
         //try {
             Scanner scanner = new Scanner(plasticStream);
             Log.d (TAG, "does scanner have next line " + scanner.hasNextLine());
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                Log.d(TAG,"comparing " +line+" and "+description);
                 if(line.equals(description)) {
                     return "Plastic";
                 }
@@ -246,6 +248,13 @@ public class CameraFragment extends Fragment {
                 String line = scanner.nextLine();
                 if(line.equals(description)) {
                     return "Compost";
+                }
+            }
+            scanner = new Scanner(metalsStream);
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if(line.equals(description)) {
+                    return "Bottle/Can";
                 }
             }
             scanner.close();
