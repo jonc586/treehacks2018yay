@@ -4,7 +4,6 @@ dirt
 soil
 banana
 apple
-food
 napkin
 human
 person

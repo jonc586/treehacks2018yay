@@ -3,7 +3,6 @@ document
 homework
 envelope
 mail
-font
 notebook
 notes
 poster
@@ -12,6 +11,4 @@ book
 books
 cardboard
 magazine
-wood
 newspaper
-material
