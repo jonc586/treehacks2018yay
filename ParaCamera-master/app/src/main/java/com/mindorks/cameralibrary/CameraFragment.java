@@ -218,7 +218,7 @@ public class CameraFragment extends Fragment {
     }
 
     private String classify(String description) {
-        TextView tv = (TextView)getView().findViewById(R.id.tv_itemStatus);
+        //TextView tv = (TextView)getView().findViewById(R.id.tv_itemStatus);
 
         InputStream plasticStream = getActivity().getResources().openRawResource(R.raw.plastic);
         InputStream paperStream = getActivity().getResources().openRawResource(R.raw.paper);
@@ -229,7 +229,7 @@ public class CameraFragment extends Fragment {
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             if(line.equals(description)) {
-                tv.setText("This item is plastic!");
+            //    tv.setText("This item is plastic!");
                 return "plastic";
             }
         }
@@ -237,7 +237,7 @@ public class CameraFragment extends Fragment {
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             if(line.equals(description)) {
-                tv.setText("This item is paper!");
+            //    tv.setText("This item is paper!");
                 return "Paper";
             }
         }
@@ -245,7 +245,7 @@ public class CameraFragment extends Fragment {
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             if(line.equals(description)) {
-                tv.setText("This item is compost!");
+            //    tv.setText("This item is compost!");
                 return "Compost";
             }
         }
@@ -253,12 +253,12 @@ public class CameraFragment extends Fragment {
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             if(line.equals(description)) {
-                tv.setText("This item is metal!");
-                return "Bottle/Can";
+            //    tv.setText("This item is metal!");
+                return "Metal";
             }
         }
         scanner.close();
-        tv.setText("This item is trash!");
+        //tv.setText("This item is trash!");
         return "";
     }
 
