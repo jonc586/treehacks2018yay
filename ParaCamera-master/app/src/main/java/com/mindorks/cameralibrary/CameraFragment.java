@@ -90,6 +90,10 @@ public class CameraFragment extends Fragment {
         return base64EncodedImage;
     }
 
+    private String processResult(String input) {
+
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -176,6 +180,7 @@ public class CameraFragment extends Fragment {
                                 }
 
                             });
+                            String classification = processResult(result);
 
                             Log.d(TAG, result);
                             //return convertResponseToString(response);
