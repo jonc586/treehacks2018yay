@@ -91,6 +91,8 @@ public class CameraFragment extends Fragment {
     }
 
     private String processResult(String input) {
+        ArrayList<String> buffer = new ArrayList<String>();
+        buffer.
         return null;
     }
 
