@@ -84,14 +84,14 @@ public class CameraFragment extends Fragment {
     private Image getImageEncodeImage(Bitmap bitmap) {
         Image base64EncodedImage = new Image();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 10, byteArrayOutputStream);
         byte[] imageBytes = byteArrayOutputStream.toByteArray();
         base64EncodedImage.encodeContent(imageBytes);
         return base64EncodedImage;
     }
 
     private String processResult(String input) {
-
+        return null;
     }
 
     @Override
@@ -110,7 +110,7 @@ public class CameraFragment extends Fragment {
                         new VisionRequestInitializer("AIzaSyB_wbusucGiv0ZAzH73_w_rm2tM7G88SR8"));
 
                 final Vision vision = visionBuilder.build();
-                Toast.makeText(getActivity().getApplicationContext(), "Loading...", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity().getApplicationContext(), "Loading...", Toast.LENGTH_SHORT).show();
 
                 Feature feature = new Feature();
                 feature.setType("LABEL_DETECTION");
@@ -135,48 +135,48 @@ public class CameraFragment extends Fragment {
 
                             Vision.Builder builder = new Vision.Builder(httpTransport, jsonFactory, null);
                             builder.setVisionRequestInitializer(requestInitializer);
-                            getActivity().runOnUiThread(new Runnable() {
+                            /*getActivity().runOnUiThread(new Runnable() {
                                 public void run() {
                                     Toast.makeText(getActivity().getApplicationContext(), "Initializer Requested", Toast.LENGTH_SHORT).show();
                                 }
 
-                            });
+                            });*/
 
                             //Vision vision = builder.build();
 
                             BatchAnnotateImagesRequest batchAnnotateImagesRequest = new BatchAnnotateImagesRequest();
                             batchAnnotateImagesRequest.setRequests(Arrays.asList(annotateImageReq));
-                            getActivity().runOnUiThread(new Runnable() {
+                            /*getActivity().runOnUiThread(new Runnable() {
                                 public void run() {
                                     Toast.makeText(getActivity().getApplicationContext(), "Annotated Images Requested", Toast.LENGTH_SHORT).show();
                                 }
 
-                            });
+                            });*/
 
                             Vision.Images.Annotate annotateRequest = vision.images().annotate(batchAnnotateImagesRequest);
                             annotateRequest.setDisableGZipContent(true);
-                            getActivity().runOnUiThread(new Runnable() {
+                            /*getActivity().runOnUiThread(new Runnable() {
                                 public void run() {
                                     Toast.makeText(getActivity().getApplicationContext(), "Images Annotated", Toast.LENGTH_SHORT).show();
                                 }
 
-                            });
+                            });*/
 
                             BatchAnnotateImagesResponse response = annotateRequest.execute();
 
-                            getActivity().runOnUiThread(new Runnable() {
+                            /*getActivity().runOnUiThread(new Runnable() {
                                 public void run() {
                                     Toast.makeText(getActivity().getApplicationContext(), "requests sent", Toast.LENGTH_SHORT).show();
                                 }
 
-                            });
+                            });*/
 
                             Log.d(TAG, "result received, or something");
                             final String result = response.getResponses().get(0).toString();
 
                             getActivity().runOnUiThread(new Runnable() {
                                 public void run() {
-                                    Toast.makeText(getActivity().getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity().getApplicationContext(), result, Toast.LENGTH_LONG).show();
                                 }
 
                             });
